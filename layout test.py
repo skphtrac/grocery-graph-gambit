@@ -2,6 +2,8 @@ import numpy as np
 from functools import cached_property
 import random
  
+
+
  
 class Store():
     _assortment = {
@@ -229,18 +231,16 @@ class Store():
     ]
     
     # def compute_path_cost():
-        
     
   
-    def random_sample(self, len_mu=15, len_sigma=3):
-        return random.sample(self.flat_assortment, int(abs(random.gauss(len_mu, len_sigma))))
+    # def random_sample(self, len_mu=15, len_sigma=3):
+    #     return random.sample(self.flat_assortment, int(abs(random.gauss(len_mu, len_sigma))))
         
-    @cached_property
-    def flat_assortment(self):
-        flat_assortment = []
+    # @cached_property
+    # def flat_assortment(self):
+    #     flat_assortment = []
         
-        for category_names, category_articles in self._assortment.items():
-            flat_assortment.extend(category_articles)
+    #     for category_names, category_articles in self._assortment.items():
+    #         flat_assortment.extend(category_articles)
  
-        return flat_assortment
- 
+    #     return flat_assortment
