@@ -187,66 +187,123 @@ class Store():
         ]
     }
  
-    _layout_edges = [
-        ("start", "A", 0),
-        ("A", "B", 1),
-        ("B", "C", 1),
-        ("C", "D", 1),
-        ("D", "E", 1),
-        ("E", "F", 1),
-        ("F", "G", 1),
-        ("G", "H", 1),
-        ("H", "I", 1),
-        ("B", "X1", .5),
-        ("X1", "H", .5),
-        ("X1", "O", .5),
-        ("X1", "N", .5),
-        ("X1", "K", .5),
-        ("X1", "I", .5),
-        ("O", "P", 1),
-        ("K", "L", 1),
-        ("L", "M", 1),
-        ("I", "J", 1),
-        ("P", "X2", .5),
-        ("N", "X2", .5),
-        ("M", "X2", .5),
-        ("J", "X2", .5),
-        ("X2", "end", 0)
-    ]
-    
-    _layout_shelfs_by_vertices = {
-        "A": [ "Brot/Aufstrich" ],
-        "B": [ "Müsli" ],
-        "C": [ "FG-nass" ],
-        "D": [ "Fleisch" ],
-        "E": [ "MoPro"],
-        "F": [ "FG-TK"],
-        "G": [ "Eis" ],
-        "H": [ "Milch" ],
-        "I": [ "Konserven", "Drogerie" ],
-        "J": [ "Presse", "Hygiene"],
-        "K": [ "Gewürze/Saucen", "FG-trocken" ],
-        "L": [ "Nudeln/Reis" ],
-        "M": [ "Backen", "Snacks" ],
-        "N": [ "N-Alk", "Alk" ],
-        "O": [ "Tee/Kaffee" ],
-        "P": [ "Gebäck/Schokolade" ]
+    _layout_edges = {
+        'Entrance': ['A'],
+        'A': ['B'],
+        'B': ['C'],
+        'C': ['D', 'X1'],
+
+        'D': ['E', 'X1'],
+        'E': ['F', 'D'],
+        'F': ['G', 'E'],
+        'G': ['H', 'F'],
+        'H': ['I', 'G'],
+        'I': ['J','X1', 'H'],
+
+        'X1': ['L', 'O', 'P', 'D', 'I'],
+
+        'J': ['K', 'X1', 'I'],
+        'K': ['X2', 'J'],
+
+        'L': ['M', 'X1'],
+        'M': ['N', 'L'],
+        'N': ['X2', 'M'],
+
+        'O': ['X2', 'X1'],
+
+        'P': ['Q', 'X1'],
+        'Q': ['X2', 'P'],
+
+        'X2': ['K', 'N', 'O', 'Q', 'Exit'],
+        'Exit': []
+
     }
-   
+
+    # _layout_edges = [
+    #     ("start", "A", 0),
+    #     ("A", "B", 1),
+    #     ("B", "C", 1),
+    #     ("C", "D", 1),
+    #     ("D", "E", 1),
+    #     ("E", "F", 1),
+    #     ("F", "G", 1),
+    #     ("G", "H", 1),
+    #     ("H", "I", 1),
+    #     ("B", "X1", .5),
+    #     ("X1", "H", .5),
+    #     ("X1", "O", .5),
+    #     ("X1", "N", .5),
+    #     ("X1", "K", .5),
+    #     ("X1", "I", .5),
+    #     ("O", "P", 1),
+    #     ("K", "L", 1),
+    #     ("L", "M", 1),
+    #     ("I", "J", 1),
+    #     ("P", "X2", .5),
+    #     ("N", "X2", .5),
+    #     ("M", "X2", .5),
+    #     ("J", "X2", .5),
+    #     ("X2", "end", 0)
+    # ]
+    
+    # _layout_shelfs_by_vertices = {
+    #     "A": [ "Brot/Aufstrich" ],
+    #     "B": [ "Backstation" ],
+    #     "C": [ "Müsli"],
+    #     "D": [ "FG-nass" ],
+    #     "E": [ "Fleisch" ],
+    #     "F": [ "MoPro"],
+    #     "G": [ "FG-TK"],
+    #     "H": [ "Eis" ],
+    #     "I": [ "Milch" ],
+    #     "J": [ "Konserven", "Drogerie" ],
+    #     "K": [ "Presse", "Hygiene"],
+    #     "L": [ "Gewürze/Saucen", "FG-trocken" ],
+    #     "M": [ "Nudeln/Reis" ],
+    #     "N": [ "Backen", "Snacks" ],
+    #     "O": [ "N-Alk", "Alk" ],
+    #     "P": [ "Tee/Kaffee" ],
+    #     "Q": [ "Gebäck/Schokolade" ]
+    # }
+
+    _accessible_shelfs = {
+        "A": [ "Brot/Aufstrich", "Obst" ],
+        "B": [ "Backstation", "Obst" ],
+        "C": [ "Müsli" , "Obst"],
+        "D": [ "FG-nass", "Wochenaktionen" ],
+        "E": [ "Fleisch", "Wochenaktionen"  ],
+        "F": [ "MoPro", "Wochenaktionen" ],
+        "G": [ "FG-TK", "Wochenaktionen" ],
+        "H": [ "Eis", "Wochenaktionen" ],
+        "I": [ "Milch", "Wochenaktionen" ],
+        "J": [ "Konserven", "Drogerie" ],
+        "K": [ "Presse", "Hygiene"],
+        "L": [ "Gewürze/Saucen", "FG-trocken" ],
+        "M": [ "Nudeln/Reis" ],
+        "N": [ "Backen", "Snacks" ],
+        "O": [ "N-Alk", "Alk" ],
+        "P": [ "Tee/Kaffee", "Obst" ],
+        "Q": [ "Gebäck/Schokolade", "Obst" ]
+    }
+
+
+bla = 'A'
+#print(Store()._accessible_shelfs.get(bla))
+
       
-    _layout = [
-        ("start", "Brot/Auftrich"),
-        ("Brot/Auftrich", "Müsli"),
-        ("Müsli", "FG-nass"),
-        ("Müsli", "X1"),
-        ("FG-nass", "Fleisch"),
-        ("Fleisch", "MoPro"),
-        ("MoPro", "FG-TK"),
-        ("FG-TK", "Eis"),
-        ("Eis", "Milch"),
-        ("Milch", "X1"),
-        ("Milch", "")
-    ]
+    # _layout = [
+    #     ("start", "Brot/Auftrich"),
+    #     ("Brot/Auftrich", "Müsli"),
+    #     ("Müsli", "FG-nass"),
+    #     ("Müsli", "X1"),
+    #     ("FG-nass", "Fleisch"),
+    #     ("Fleisch", "MoPro"),
+    #     ("MoPro", "FG-TK"),
+    #     ("FG-TK", "Eis"),
+    #     ("Eis", "Milch"),
+    #     ("Milch", "X1"),
+    #     ("Milch", "")
+    # ]
     
     # def compute_path_cost():
     

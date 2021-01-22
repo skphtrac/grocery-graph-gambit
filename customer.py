@@ -89,24 +89,41 @@ class Shopping_sequence:
 
     def __init__(self, customer):
         self.customer = customer
+        self.current_location = 'A' #als test hier starten, aber besser fall für knotenpunkt "Entrance" implementieren
+
+        self.start_sequence()
 
         
     
     def start_sequence(self):
 
         self.look()
-        self.evaluate()
-        self.decide
+        
 
     
     def look(self):
         #was sucht kunde?
+        if not self.customer.shopping_list:
+            
             #aktuellen Knotenpunkt bestimmen
             #erreichbare segmente von diesem knotenpunkt aus
+            self.accessible_shelfs = Store()._accessible_shelfs.get(self.current_location)
 
-        return null
+            self.evaluate()
+        
+        else:
+            self.go_to_exit(self.current_location)
+
+        
+        
 
     def evaluate(self):
+
+        for x in self.customer.shopping_list:
+            for y in self.accessible_shelfs:
+                for z in Store()._assortment.get(y):
+                    if x is z:
+                        print('Found Product: ' + str(x))
         # ist ein produkt von liste von hier erreichbar?
             #produkte auf einkaufsliste durchschauen
             #mit erreichbaren Produkten vergleichen (bei strings am besten "is" anstatt "==")
@@ -116,22 +133,41 @@ class Shopping_sequence:
         # welche knotenpunkte sind von hier erreichbar
             # was ist der beste nächste schritt?
                 #wahrscheinlichkeiten, "man geht lieber nach rechts als links" 
+        
+        # evtl "Große Runde" rund um Wochenaktionen (D,E,F,G,H,I) abhaken, wenn man einmal durchgelaufen ist, ist ein zweitr gang nicht nötig  (z.B von X1 nach D/I und von J nach I)
 
-        return null
+        self.decide()
 
 
     def decide(self):
         #Mögliche entscheidung treffen, wurde ein produkt gefunden?
             # ja -> produkt von liste streichen?
             # nein -> weitergehen, wohin? mögliche knotenpunkte/wahrscheinlichkeiten der knotenpunkte abwägen
+                # letzten knotenpunkt speichern, somit prüfen, wo man zuletzt war um so stets vorwärts in eine richutng zu gehen
         
-        return null
+        self.look()
 
 
-
-
+    def go_to_exit(self, current_location):
+        return None
+        # finde den stellsten ausgang vom Knotenpunkt "current location" aus
 
 
 cus1 = Customer()
 
 # ss1 = Shopping_sequence(cust1)
+
+
+#print(Store()._assortment.get(Store()._accessible_shelfs.get('A')))
+test = Store()._accessible_shelfs.get('A')
+print(test)
+
+for x in test:
+    print(Store()._assortment.get(x))
+
+
+for x in cus1.shopping_list:
+    for i in test:
+        for y in Store()._assortment.get(i):
+            if x is y:
+                print('Found Product: ' + str(x))
