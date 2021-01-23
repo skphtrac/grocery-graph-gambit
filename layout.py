@@ -12,14 +12,14 @@ class Store():
             "Zott, Sahnejoghurt, Erdbeer",
             "Froop, Fruchjoghurt, Pfirsch-Maracuja",
             "Elinas, Griechischer Joghurt, natur",
-            "Salakis, Schafskäse",
+            "Salakis, Schafskaese",
         ],
         "Fleisch": [
             "GardenGourmet, Veggie-Filetstreifen",
             "Valess, Veggie-Schnitzel",
             "LikeMeat, Veggie-Schinkenwurst",
             "Die Echte, Veggie-Paprikawurst",
-            "Rügenwalder, Veggie-Salami"
+            "Ruegenwalder, Veggie-Salami"
         ],
         "FG-nass": [
             "Landfreude Bratkartoffeln",
@@ -39,19 +39,19 @@ class Store():
             "Becks, Gold",
             "Stauder, alkoholfrei",
             "Freixenet, Carta Nevada",
-            "Rotkäppchen, rot",
+            "Rotkaeppchen, rot",
             "Schneider, Riesling"
             "Gallo Family, Primitivo"
             "Barcadi, Razz",
             "Absolut"
         ],
-        "Tee/Kaffe": [
+        "Tee/Kaffee": [
             "Dallmeyer, Prodomo",
-            "Jacobs, Krönung",
+            "Jacobs, Kroenung",
             "Melitta, Auslese",
             "Eduscho, Gala Nr. 1",
-            "Teekanne, Ländertee, Italienische Limone",
-            "Meßmer, Grün",
+            "Teekanne, Laendertee, Italienische Limone",
+            "Meßmer, Gruen",
             "Nestlé, Nesquik"
         ],
         "FG-TK": [
@@ -59,21 +59,21 @@ class Store():
             "Dr. Oetker, Ristorante, Quattro Formaggi",
             "Agrarfrost, Kroketten",
             "Wagner, Margarita",
-            "Bördegold, Rösti-Ecken"
+            "Boerdegold, Roesti-Ecken"
         ], 
         "Eis": [
-            "Langnese, Königsrolle",
+            "Langnese, Koenigsrolle",
             "Cornetto, Classico",
             "Magnum, Classic",
             "Langnese, Dolomiti",
-            "Nestlé Schöller, Sandwich"
+            "Nestlé Schoeller, Sandwich"
         ],
         "Milch": [
-            "Bärenmarke, Haltbare Milch",
+            "Baerenmarke, Haltbare Milch",
             "Weihenstephan",
             "Landliebe",
             "MinusL, Schmand",
-            "Bärenmarke, Die Ergebiege"
+            "Baerenmarke, Die Ergebiege"
         ], 
         "Drogerie": [
             "Tempo",
@@ -82,7 +82,7 @@ class Store():
             "Hakle, Kamille",
             "DuschDas, For Men",
             "Nivea, Creme-Dusche",
-            "Schauma, 7 Kräuter",
+            "Schauma, 7 Kraeuter",
             "Rexona, Cobalt Dry",
             "Dove, original"
         ],
@@ -93,7 +93,7 @@ class Store():
         ],
         "Hygiene": [
             "Ariel, Pulver",
-            "Persil, flüssig",
+            "Persil, fluessig",
             "Frosch, Essigreiniger",
             "Meister Proper",
             "VIM"
@@ -104,7 +104,7 @@ class Store():
             "Lorenz, Crunchips",
             "Pringles, Hot & Spicy",
             "Lorenz, Saltletts",
-            "Katjes, Glücksgefühle",
+            "Katjes, Gluecksgefuehle",
             "Katjes, Salzige Heringe"
         ],
         "Backen": [
@@ -119,16 +119,16 @@ class Store():
             "Maggi, Fix, Napoli",
             "Maggi, Fix, Chilli con carne",
             "Miracoli, mit Tomatensauce",
-            "Kühne, Gewürzgurken"   
+            "Kuehne, Gewuerzgurken"   
         ],
         "Konserven": [
             "Bonduelle, Mais",
-            "Oro di Parma, Stückige Tomaten",
+            "Oro di Parma, Stueckige Tomaten",
             "Mutti, Passierte Tomaten",
-            "Bonduelle, Erbsen und Möhren, fein"
+            "Bonduelle, Erbsen und Moehren, fein"
         ],
-        "Gewürze/Saucen": [
-            "Hela, Gewürzketchup",
+        "Gewuerze/Saucen": [
+            "Hela, Gewuerzketchup",
             "Thomy, Delikatess-Senf, mittelscharf",
             "Heinz, Tomato-Ketchup",
             "Surig, Essig-Essenz",
@@ -140,9 +140,9 @@ class Store():
             "Buitoni, Eliche",
             "Uncle Ben's Spitzen-Lankorn-Reis",
             "Oryza, Natur-Reis",
-            "Pfanni, Kartoffel-Püree"
+            "Pfanni, Kartoffel-Pueree"
         ],
-        "Gebäck/Schokolade": [
+        "Gebaeck/Schokolade": [
             "Schogetten, Vollmilch",
             "Milka, Luflée",
             "Ritter Sport, Marzipan",
@@ -153,22 +153,22 @@ class Store():
         ],
         "Brot/Aufstrich": [
             "Nutella",
-            "Wasa, Mjölk",
+            "Wasa, Mjoelk",
             "Harry, Rosinenstuten",
             "Golden Toast, Vollkorn",
             "Brandt, Der Markenzwieback"
         ],
-        "Müsli": [
+        "Muesli": [
             "Kellogs, Smacks",
-            "Kölln, Flocken",
+            "Koelln, Flocken",
             "Corny, Schoko",
             "Dr. Oetker, Vitalis",
             "Nestlé, CiniMinis"
         ],
         "Backstation": [
-            "Lange, Weltmeisterbrötchen",
+            "Lange, Weltmeisterbroetchen",
             "Lange, Krapfen",
-            "Lange, Käsebrot",
+            "Lange, Kaesebrot",
             "Lange, Donuts"
         ],
         "Obst": [
@@ -191,18 +191,18 @@ class Store():
         'Entrance': ['A'],
         'A': ['B'],
         'B': ['C'],
-        'C': ['D', 'X1'],
+        'C': ['X1'],
 
         'D': ['E', 'X1'],
         'E': ['F', 'D'],
         'F': ['G', 'E'],
         'G': ['H', 'F'],
         'H': ['I', 'G'],
-        'I': ['J','X1', 'H'],
+        'I': ['X1', 'H'],
 
-        'X1': ['L', 'O', 'P', 'D', 'I'],
+        'X1': ['L', 'O', 'P', 'D', 'I', 'J'],
 
-        'J': ['K', 'X1', 'I'],
+        'J': ['K', 'X1'],
         'K': ['X2', 'J'],
 
         'L': ['M', 'X1'],
@@ -267,9 +267,11 @@ class Store():
     # }
 
     _accessible_shelfs = {
+        "Entrance": [],
         "A": [ "Brot/Aufstrich", "Obst" ],
         "B": [ "Backstation", "Obst" ],
-        "C": [ "Müsli" , "Obst"],
+        "C": [ "Muesli" , "Obst"],
+        "X1": [],
         "D": [ "FG-nass", "Wochenaktionen" ],
         "E": [ "Fleisch", "Wochenaktionen"  ],
         "F": [ "MoPro", "Wochenaktionen" ],
@@ -278,17 +280,21 @@ class Store():
         "I": [ "Milch", "Wochenaktionen" ],
         "J": [ "Konserven", "Drogerie" ],
         "K": [ "Presse", "Hygiene"],
-        "L": [ "Gewürze/Saucen", "FG-trocken" ],
+        "L": [ "Gewuerze/Saucen", "FG-trocken" ],
         "M": [ "Nudeln/Reis" ],
         "N": [ "Backen", "Snacks" ],
         "O": [ "N-Alk", "Alk" ],
         "P": [ "Tee/Kaffee", "Obst" ],
-        "Q": [ "Gebäck/Schokolade", "Obst" ]
+        "Q": [ "Gebaeck/Schokolade", "Obst" ],
+        "X2": [],
+        "Exit": []
     }
 
 
-bla = 'A'
-#print(Store()._accessible_shelfs.get(bla))
+# bla = 'A'
+# print(Store()._accessible_shelfs.get(bla))
+
+
 
       
     # _layout = [

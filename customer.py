@@ -88,55 +88,100 @@ class Customer:
 class Shopping_sequence:
 
     def __init__(self, customer):
+
         self.customer = customer
-        self.current_location = 'A' #als test hier starten, aber besser fall für knotenpunkt "Entrance" implementieren
+        self.path = []
 
-        self.start_sequence()
+        self.current_location = 'Entrance'  
+        self.walk(self.current_location)
+    
+
+
+    def walk(self, next):
+        self.last_location = self.current_location
+        self.current_location = next
+
+        if self.current_location != 'X1' and self.current_location != 'X2':
+            self.path.append(self.current_location)
+
+        self.next_locations = Store()._layout_edges.get(self.current_location) # Knotenpunkt "Exit" hat keine next-locations
+
+        print('\n' + 'walked from ' + str(self.last_location) + ' to ' + str(self.current_location))
+
+        self.search_shelfes()    
+
+
+    def search_shelfes(self):
 
         
-    
-    def start_sequence(self):
+        if self.customer.shopping_list:
 
-        self.look()
-        
-
-    
-    def look(self):
-        #was sucht kunde?
-        if not self.customer.shopping_list:
-            
-            #aktuellen Knotenpunkt bestimmen
             #erreichbare segmente von diesem knotenpunkt aus
             self.accessible_shelfs = Store()._accessible_shelfs.get(self.current_location)
 
-            self.evaluate()
-        
-        else:
-            self.go_to_exit(self.current_location)
+            # ist ein produkt von liste von hier erreichbar?
+            if self.accessible_shelfs:
 
-        
-        
+                #produkte auf einkaufsliste durchschauen
+                print('checking shelfes: ')
+                for x in self.customer.shopping_list:
+                    for y in self.accessible_shelfs:
+                        for z in Store()._assortment.get(y):
+                            if x is z:
+                                print('Found Product: ' + str(x))
+                                # product von liste streichen
+                                self.customer.shopping_list.remove(x)
+                                # später graphen gewichten
+                
+                
+                #spontankauf? von geplanter einkaufsmenge abhängig machen und bei jedem knotenpunkt mit kleiner Wahrscheinlichkeit entscheiden lassen, ob ein ungeplantes produkt in den korb gelegt werden soll
 
-    def evaluate(self):
+            #sucht kunde noch nach produkten?
+            if self.customer.shopping_list:
 
-        for x in self.customer.shopping_list:
-            for y in self.accessible_shelfs:
-                for z in Store()._assortment.get(y):
-                    if x is z:
-                        print('Found Product: ' + str(x))
-        # ist ein produkt von liste von hier erreichbar?
-            #produkte auf einkaufsliste durchschauen
-            #mit erreichbaren Produkten vergleichen (bei strings am besten "is" anstatt "==")
+                print('remaining shopping list: ' + str(self.customer.shopping_list))
 
-            #spontankauf? von geplanter einkaufsmenge abhängig machen und bei jedem knotenpunkt mit kleiner Wahrscheinlichkeit entscheiden lassen, ob ein ungeplantes produkt in den korb gelegt werden soll
+                # welche knotenpunkte sind von hier erreichbar
+                if self.next_locations:
 
-        # welche knotenpunkte sind von hier erreichbar
-            # was ist der beste nächste schritt?
-                #wahrscheinlichkeiten, "man geht lieber nach rechts als links" 
-        
-        # evtl "Große Runde" rund um Wochenaktionen (D,E,F,G,H,I) abhaken, wenn man einmal durchgelaufen ist, ist ein zweitr gang nicht nötig  (z.B von X1 nach D/I und von J nach I)
+                    while True:
+                        poss_nxt_loc = random.choice(self.next_locations)
 
-        self.decide()
+                        print('possible next location: ' + str(poss_nxt_loc))
+                        print(self.path)
+                        print('remaining shopping list: ' + str(self.customer.shopping_list))
+                        print('current location: ' + str(self.current_location))
+                        
+                        if (
+                            poss_nxt_loc not in self.path and 
+                            poss_nxt_loc != self.last_location and
+                            poss_nxt_loc != 'Exit'
+                        ) :
+
+                            self.walk(poss_nxt_loc)
+                            break
+
+                        
+                        elif (
+                            (self.current_location == 'X1' or self.current_location == 'X2') and
+                            poss_nxt_loc not in self.path and 
+                            poss_nxt_loc != self.last_location and
+                            poss_nxt_loc != 'Exit'
+                        ) :
+                            print('ERROR')
+                            print(self.path)
+                            print('remaining shopping list: ' + str(self.customer.shopping_list))
+                            print('current location: ' + str(self.current_location))
+                            #self.walk(poss_nxt_loc)
+                            break
+                        
+
+            else:
+                print('Shopping list empty, go to exit')
+                print(self.path)
+                #self.go_to_exit(self.current_location)
+
+ 
 
 
     def decide(self):
@@ -144,9 +189,7 @@ class Shopping_sequence:
             # ja -> produkt von liste streichen?
             # nein -> weitergehen, wohin? mögliche knotenpunkte/wahrscheinlichkeiten der knotenpunkte abwägen
                 # letzten knotenpunkt speichern, somit prüfen, wo man zuletzt war um so stets vorwärts in eine richutng zu gehen
-        
-        self.look()
-
+        return None
 
     def go_to_exit(self, current_location):
         return None
@@ -155,19 +198,20 @@ class Shopping_sequence:
 
 cus1 = Customer()
 
-# ss1 = Shopping_sequence(cust1)
+ss1 = Shopping_sequence(cus1)
 
 
-#print(Store()._assortment.get(Store()._accessible_shelfs.get('A')))
-test = Store()._accessible_shelfs.get('A')
-print(test)
 
-for x in test:
-    print(Store()._assortment.get(x))
+# test = Store()._accessible_shelfs.get('Entrance')
+# # print(test)
+
+# # for x in test:
+# #     print(Store()._assortment.get(x))
+
+# for x in cus1.shopping_list:
+#     for i in test:
+#         for y in Store()._assortment.get(i):
+#             if x is y:
+#                 print('Found Product: ' + str(x))
 
 
-for x in cus1.shopping_list:
-    for i in test:
-        for y in Store()._assortment.get(i):
-            if x is y:
-                print('Found Product: ' + str(x))
