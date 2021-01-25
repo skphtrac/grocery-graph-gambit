@@ -4,6 +4,7 @@ from random import randint
 import numpy as np
 
 from layout import Store
+from layout import Graph
 
 
 
@@ -90,8 +91,8 @@ class Shopping_sequence:
     def __init__(self, customer):
 
         self.customer = customer
-        self.path = []                      # visited Knots 
-        self.visited_isles = []             # like path but without Decision-Knots
+        self.path = []                      # visited nodes 
+        self.visited_isles = []             # like path but without Decision-nodes
 
         self.shopping_cart = []             # list of products in the order they were found
 
@@ -164,9 +165,10 @@ class Shopping_sequence:
                         
 
         else:
-            print('Shopping list empty, go to exit')
-            print(self.path)
-            #self.go_to_exit(self.current_location)
+            print('Shopping list empty, go to exit' + '\n')
+            print('Path to last Product on List: ' + '\n' + str(self.path))
+            # Graph().draw_customer_path(self.visited_isles)
+            # Graph().draw_product_graph(self.shopping_cart)
 
  
 
@@ -177,10 +179,6 @@ class Shopping_sequence:
             # nein -> weitergehen, wohin? mögliche knotenpunkte/wahrscheinlichkeiten der knotenpunkte abwägen
                 # letzten knotenpunkt speichern, somit prüfen, wo man zuletzt war um so stets vorwärts in eine richutng zu gehen
         return None
-
-    def go_to_exit(self, current_location):
-        return None
-        # finde den stellsten ausgang vom Knotenpunkt 'current location' aus
 
 
 cus1 = Customer()

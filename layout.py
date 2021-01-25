@@ -1,7 +1,8 @@
-import numpy as np
+# import numpy as np
 from functools import cached_property
-import random
-
+# import random
+import networkx as nx
+import matplotlib.pyplot as plt
  
 class Store():
     _assortment = {
@@ -291,12 +292,6 @@ class Store():
     }
 
 
-# bla = 'A'
-# print(Store()._accessible_shelfs.get(bla))
-
-
-
-      
     # _layout = [
     #     ('start', 'Brot/Auftrich'),
     #     ('Brot/Auftrich', 'Müsli'),
@@ -326,4 +321,98 @@ class Store():
  
     #     return flat_assortment
 
-#print(random.choice(Store()._assortment[random.choice(list(Store()._assortment))]))
+
+
+class Graph:
+
+    def __init__(self):
+
+        self.store_graph = nx.DiGraph()
+        self.customer_store_graph = nx.DiGraph()
+
+        self.weighted_product_graph = {}
+        
+        self.store_graph.add_nodes_from(Store._layout_edges.keys())
+
+        self.position_nodes(self.store_graph)
+        self.make_store_layout()
+
+    def position_nodes(self, graph1):
+
+        graph1.nodes['Entrance']['pos'] = (0,0)
+        graph1.nodes['A']['pos'] = (0,4)
+        graph1.nodes['B']['pos'] = (0,8)
+        graph1.nodes['C']['pos'] = (0,12)
+        graph1.nodes['X1']['pos'] = (8,14)
+        graph1.nodes['D']['pos'] = (0,16)
+        graph1.nodes['E']['pos'] = (0,20)
+        graph1.nodes['F']['pos'] = (10,20)
+        graph1.nodes['G']['pos'] = (16,20)
+        graph1.nodes['H']['pos'] = (16,18)
+        graph1.nodes['I']['pos'] = (16,16)
+        graph1.nodes['J']['pos'] = (16,12)
+        graph1.nodes['K']['pos'] = (16,5.5)
+        graph1.nodes['L']['pos'] = (12,12.5)
+        graph1.nodes['M']['pos'] = (12,10)
+        graph1.nodes['N']['pos'] = (12,5.5)
+        graph1.nodes['O']['pos'] = (8,10)
+        graph1.nodes['P']['pos'] = (4,12)
+        graph1.nodes['Q']['pos'] = (4,8)
+        graph1.nodes['X2']['pos'] = (10,4)
+        graph1.nodes['Exit']['pos'] = (10,0)
+
+        self.store_nodes_pos = nx.get_node_attributes(self.store_graph, 'pos')
+    
+    def draw_customer_path(self, path):
+        
+        
+
+        path_to_exit = nx.bidirectional_shortest_path(self.store_graph, path[len(path)-1], 'Exit')
+        
+        for x in range(1, len(path_to_exit)):
+            path.append(path_to_exit[x])
+
+        for x in range(0, len(path)-1):
+            self.customer_store_graph.add_edge(path[x], path[x+1])
+        
+        print('Path to Exit: ' + '\n' + str(path_to_exit))
+        self.draw_graph(self.customer_store_graph)
+
+
+    def make_store_layout(self):
+
+        for x in Store._layout_edges.keys():
+            for y in Store._layout_edges.get(x):
+                self.store_graph.add_edge(x,y)
+
+        # self.draw_graph(self.store_graph)
+
+    def draw_graph(self, graph):
+        nx.draw_networkx(graph, self.store_nodes_pos, node_size = 450)
+        nx.draw_networkx_labels(graph, self.store_nodes_pos)
+        plt.axis('off')
+        plt.show()
+
+
+    def add_to_weighted_product_graph(self, products):
+
+        if self.weighted_product_graph:
+            return None
+        
+        else:
+            for x in range(0, len(products)-1):
+                self.weighted_product_graph[str(x)] = str(x+1)
+            
+
+
+    def draw_product_graph(self, products):
+
+        product_graph = nx.DiGraph()
+        product_graph.add_nodes_from(products)
+
+        for x in range(0, len(products)-1):
+            product_graph.add_edge(products[x], products[x+1])
+        
+        nx.draw_networkx(product_graph, pos=None, node_size = 100)
+        plt.axis('off')
+        plt.show()
