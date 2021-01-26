@@ -321,7 +321,7 @@ class Store():
  
     #     return flat_assortment
 
-
+weighted_products = {}
 
 class Graph:
 
@@ -330,7 +330,7 @@ class Graph:
         self.store_graph = nx.DiGraph()
         self.customer_store_graph = nx.DiGraph()
 
-        self.weighted_product_graph = {}
+        
         
         self.store_graph.add_nodes_from(Store._layout_edges.keys())
 
@@ -387,6 +387,7 @@ class Graph:
 
         # self.draw_graph(self.store_graph)
 
+
     def draw_graph(self, graph):
         nx.draw_networkx(graph, self.store_nodes_pos, node_size = 450)
         nx.draw_networkx_labels(graph, self.store_nodes_pos)
@@ -396,12 +397,63 @@ class Graph:
 
     def add_to_weighted_product_graph(self, products):
 
-        if self.weighted_product_graph:
-            return None
-        
-        else:
-            for x in range(0, len(products)-1):
-                self.weighted_product_graph[str(x)] = str(x+1)
+        for x in range(0, len(products)-1):
+            if products[x] in weighted_products:
+                
+                value_exists = False
+
+                # prüfe, ob value schon vorhanden ist, dann nur wert erhöhen
+                for key in weighted_products:
+                    if key == products[x]:
+
+                        
+
+                        for y in range(0, len(weighted_products[key])-1):
+                            
+                            if len(weighted_products[key])>2:
+                                print(weighted_products[key])
+                                if weighted_products[key][0][y] == products[x+1]:
+                                    value_exists = True
+                                    weighted_products[key][0][y+1] += 1
+                                    
+                            else:
+                                if weighted_products[key][y] == products[x+1]:
+                                    value_exists = True
+                                    weighted_products[key][y+1] += 1
+                                    
+                        break
+                            
+
+                # prüfe, ob value schon vorhanden ist, dann nur wert erhöhen
+                # for y in range(0, len(weighted_products[products[x]])):
+                    
+
+                    
+
+
+                #     product2 = products[x+1]
+                #     product1 = str(products[x])
+                #     print(weighted_products[product1][y][0])
+                    
+                #     # if weighted_product == product2:
+                        
+                #     #     print('ssssssssssssssssssssssss')
+
+                #     #     # value_exists = True
+                #     #     # weighted_products[products[int(x)]][int(y)][1] += 1
+
+
+                # füge key mit folgendem artikel als value hinzu
+                if not value_exists:
+
+                    new_value = [products[x+1], 1]
+                    weighted_products[str(products[x])].append(new_value)
+
+            else:
+                weighted_products[products[x]] = [products[x+1], 1]
+
+        print(weighted_products)
+
             
 
 
@@ -416,3 +468,48 @@ class Graph:
         nx.draw_networkx(product_graph, pos=None, node_size = 100)
         plt.axis('off')
         plt.show()
+
+
+
+gle = ['B',3]
+gleb = ['C', 0]
+
+bla = {}
+bla['A'] = gle, gleb
+bla['B'] = gleb
+bla['C'] = ['D', 2]
+
+
+ble = ['A', 'B', 'C']
+
+
+for index in range(0, len(ble)-1):
+
+    for key in bla:
+        if key == ble[index]:
+            for y in range(0, len(bla[key])-1):
+
+                if len(bla[key])>1:
+                    if bla[key][0][y] == ble[index]:
+                        bla[key][0][y+1] += 1
+                else:
+                    if bla[key][y] == ble[index]:
+                        bla[key][y+1] += 1
+
+                
+
+
+
+
+# for key1 in ble:
+#     print(key1)
+
+#     for key2 in bla:
+#         if key1 == key2:
+#             # print(bla[key2])
+#             print(bla[key2][0])
+
+
+
+
+print(bla)
