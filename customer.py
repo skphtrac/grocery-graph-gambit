@@ -22,7 +22,7 @@ class Customer:
         self.fill_shopping_list(self.shopping_list)
 
 
-        self.print_customer()        
+        # self.print_customer()        
     
 
 
@@ -167,10 +167,10 @@ class Shopping_sequence:
         else:
             print('Shopping list empty, go to exit' + '\n')
             print('Path to last Product on List: ' + '\n' + str(self.path))
-            Graph().draw_customer_path(self.visited_isles)
-            Graph().draw_product_graph(self.shopping_cart)
-            # Graph().add_to_weighted_product_graph(self.shopping_cart)
-            # Graph().add_to_weighted_product_graph(self.shopping_cart)
+            # Graph().draw_customer_path(self.visited_isles)
+            # Graph().draw_product_graph(self.shopping_cart)
+            Graph().add_to_weighted_product_graph(self.shopping_cart)
+            Graph().add_to_weighted_product_graph(self.shopping_cart)
 
  
 
@@ -187,8 +187,11 @@ cus1 = Customer()
 cus2 = Customer()
 cus3 = Customer()
 
+cus4 = Customer()
+cus5 = Customer()
+cus6 = Customer()
 
-ss1 = Shopping_sequence(cus1)
-ss2 = Shopping_sequence(cus2)
-ss2 = Shopping_sequence(cus3)
+customers = [cus1, cus2, cus3, cus4, cus5, cus6]
 
+for Customer in customers:
+    ss1 = Shopping_sequence(Customer)

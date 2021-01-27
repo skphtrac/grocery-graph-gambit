@@ -330,6 +330,8 @@ class Graph:
         self.store_graph = nx.DiGraph()
         self.customer_store_graph = nx.DiGraph()
 
+        self.weight_store_graph = nx.Graph()
+
         
         
         self.store_graph.add_nodes_from(Store._layout_edges.keys())
@@ -387,10 +389,59 @@ class Graph:
 
         # self.draw_graph(self.store_graph)
 
+    def draw_weighted_store_layout(self): #Gewichtung überarbeiten
+
+        # self.position_nodes(self.weight_store_graph)
+
+        
+        self.store_graph.add_edge('Entrance','A', weight = 0)
+        self.store_graph.add_edge('A','B', weight = 1.0)
+        self.store_graph.add_edge('B','C', weight = 1.0)
+        self.store_graph.add_edge('C','D', weight = 1.0)
+        self.store_graph.add_edge('D','E', weight = 1.0)
+        self.store_graph.add_edge('E','F', weight = 1.0)
+        self.store_graph.add_edge('F','G', weight = 1.0)
+        self.store_graph.add_edge('G','H', weight = 1.0)
+        self.store_graph.add_edge('H','I', weight = 1.0)
+        self.store_graph.add_edge('I','J', weight = 1.0)
+        self.store_graph.add_edge('J','K', weight = 1.0)
+        self.store_graph.add_edge('C','P', weight = 2.0)
+        self.store_graph.add_edge('C','O', weight = 3.0)
+        self.store_graph.add_edge('C','L', weight = 4.0)
+        self.store_graph.add_edge('C','J', weight = 5.0)
+        self.store_graph.add_edge('C','I', weight = 5.0)
+        self.store_graph.add_edge('P','D', weight = 2.0)
+        self.store_graph.add_edge('P','O', weight = 2.0)
+        self.store_graph.add_edge('P','Q', weight = 1.0)
+        self.store_graph.add_edge('P','L', weight = 3.0)
+        self.store_graph.add_edge('P','J', weight = 4.0)
+        self.store_graph.add_edge('P','I', weight = 4.0)
+        self.store_graph.add_edge('O','D', weight = 3.0)
+        self.store_graph.add_edge('O','I', weight = 3.0)
+        self.store_graph.add_edge('O','J', weight = 3.0)
+        self.store_graph.add_edge('L','D', weight = 4.0)
+        self.store_graph.add_edge('L','J', weight = 2.0)
+        self.store_graph.add_edge('L','I', weight = 2.0)
+        self.store_graph.add_edge('L','M', weight = 1.0)
+        self.store_graph.add_edge('M','N', weight = 1.0)
+        self.store_graph.add_edge('J','D', weight = 5.0)
+        self.store_graph.add_edge('Q','O', weight = 2.0)
+        self.store_graph.add_edge('Q','N', weight = 3.0)
+        self.store_graph.add_edge('Q','K', weight = 4.0)
+        self.store_graph.add_edge('O','N', weight = 2.0)
+        self.store_graph.add_edge('O','K', weight = 3.0)
+        self.store_graph.add_edge('N','K', weight = 2.0)
+        self.store_graph.add_edge('Q','Exit', weight = 3.0)
+        self.store_graph.add_edge('O','Exit', weight = 2.0)
+        self.store_graph.add_edge('N','Exit', weight = 2.0)
+        self.store_graph.add_edge('K','Exit', weight = 3.0)
+
+        self.draw_graph(self.store_graph)
 
     def draw_graph(self, graph):
         nx.draw_networkx(graph, self.store_nodes_pos, node_size = 450)
         nx.draw_networkx_labels(graph, self.store_nodes_pos)
+        nx.draw_networkx_edge_labels(graph, self.store_nodes_pos, edge_labels=nx.get_edge_attributes(graph,'weight'))
         plt.axis('off')
         plt.show()
 
@@ -406,53 +457,41 @@ class Graph:
                 for key in weighted_products:
                     if key == products[x]:
 
-                        
-
                         for y in range(0, len(weighted_products[key])-1):
+
                             
-                            if len(weighted_products[key])>2:
-                                print(weighted_products[key])
-                                if weighted_products[key][0][y] == products[x+1]:
-                                    value_exists = True
-                                    weighted_products[key][0][y+1] += 1
-                                    
-                            else:
+                            if len(weighted_products[key][0])>=2:
+
+                                # print('\n')
+                                # print('key: ' + str(weighted_products[key]))
+                                # print('following product: ' + str(weighted_products[key][y]))
+                                # print('amount: ' + str(weighted_products[key][y+1]))
+                                # print('compare to: ' + str(products[x+1]))
+
                                 if weighted_products[key][y] == products[x+1]:
                                     value_exists = True
                                     weighted_products[key][y+1] += 1
-                                    
+
+                            else:
+                                if weighted_products[key][y] == products[x+1]:
+                                    value_exists = True
+                                    weighted_products[key][0][y+1] += 1
+
                         break
                             
-
-                # prüfe, ob value schon vorhanden ist, dann nur wert erhöhen
-                # for y in range(0, len(weighted_products[products[x]])):
-                    
-
-                    
-
-
-                #     product2 = products[x+1]
-                #     product1 = str(products[x])
-                #     print(weighted_products[product1][y][0])
-                    
-                #     # if weighted_product == product2:
-                        
-                #     #     print('ssssssssssssssssssssssss')
-
-                #     #     # value_exists = True
-                #     #     # weighted_products[products[int(x)]][int(y)][1] += 1
-
-
                 # füge key mit folgendem artikel als value hinzu
                 if not value_exists:
 
                     new_value = [products[x+1], 1]
-                    weighted_products[str(products[x])].append(new_value)
+                    weighted_products[products[x]].append(new_value)
 
             else:
                 weighted_products[products[x]] = [products[x+1], 1]
 
-        print(weighted_products)
+        for keys, values in weighted_products.items():
+            print((str(keys) + ': ' + str(values)))
+
+        print('key length: '+ str(len(weighted_products)))
 
             
 
@@ -471,30 +510,35 @@ class Graph:
 
 
 
+
+
+
+
 gle = ['B',3]
 gleb = ['C', 0]
 
 bla = {}
 bla['A'] = gle, gleb
 bla['B'] = gleb
-bla['C'] = ['D', 2]
+bla['C'] = ['D', 2], gle
 
 
 ble = ['A', 'B', 'C']
 
 
-for index in range(0, len(ble)-1):
 
-    for key in bla:
-        if key == ble[index]:
-            for y in range(0, len(bla[key])-1):
+# for index in range(0, len(ble)-1):
 
-                if len(bla[key])>1:
-                    if bla[key][0][y] == ble[index]:
-                        bla[key][0][y+1] += 1
-                else:
-                    if bla[key][y] == ble[index]:
-                        bla[key][y+1] += 1
+#     for key in bla:
+#         if key == ble[index]:
+#             for y in range(0, len(bla[key])-1):
+
+#                 if len(bla[key][0])>=2:
+#                     if bla[key][0][y] == ble[1]:
+#                         bla[key][0][y+1] += 1
+#                 else:
+#                     if bla[key][y] == ble[1]:
+#                         bla[key][y+1] += 1
 
                 
 
@@ -508,8 +552,3 @@ for index in range(0, len(ble)-1):
 #         if key1 == key2:
 #             # print(bla[key2])
 #             print(bla[key2][0])
-
-
-
-
-print(bla)
