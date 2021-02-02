@@ -2,6 +2,7 @@ import random
 from random import choices
 from random import randint
 import numpy as np
+import json
 
 from layout import Store
 from layout import Graph
@@ -22,7 +23,8 @@ class Customer:
         self.fill_shopping_list(self.shopping_list)
 
 
-        # self.print_customer()        
+        # self.print_customer()
+        print('Shopping List: ' + str(self.shopping_list))        
     
 
 
@@ -166,11 +168,11 @@ class Shopping_sequence:
 
         else:
             print('Shopping list empty, go to exit' + '\n')
+            print('Shopping Cart: ' + str(self.shopping_cart))
             print('Path to last Product on List: ' + '\n' + str(self.path))
             # Graph().draw_customer_path(self.visited_isles)
             # Graph().draw_product_graph(self.shopping_cart)
-            Graph().add_to_weighted_product_graph(self.shopping_cart)
-            Graph().add_to_weighted_product_graph(self.shopping_cart)
+            # Graph().add_to_weighted_product_graph(self.shopping_cart)
 
  
 
@@ -184,14 +186,31 @@ class Shopping_sequence:
 
 
 cus1 = Customer()
-cus2 = Customer()
-cus3 = Customer()
+# cus2 = Customer()
+# cus3 = Customer()
+# cus4 = Customer()
+# cus5 = Customer()
+# cus6 = Customer()
 
-cus4 = Customer()
-cus5 = Customer()
-cus6 = Customer()
+# customers = [cus1, cus2, cus3, cus4, cus5, cus6]
 
-customers = [cus1, cus2, cus3, cus4, cus5, cus6]
+# for Customer in customers:
+#     ss1 = Shopping_sequence(Customer)
 
-for Customer in customers:
-    ss1 = Shopping_sequence(Customer)
+# print(Shopping_sequence(cus1).shopping_cart)
+
+
+
+shopping_sequences = {}
+# data['cus1'] = []
+# data['cus1'].append(Shopping_sequence(cus1).shopping_cart)
+
+
+for index in range(0, 10000):
+    shopping_sequences['CID' + str(index)] = []
+    shopping_sequences['CID' + str(index)].append(Shopping_sequence(Customer()).shopping_cart)
+
+with open('shopping_sequences.json', 'w') as file:
+    json.dump(shopping_sequences, file, indent = 4)
+
+
