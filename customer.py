@@ -26,7 +26,7 @@ class Customer:
 
 
         # self.print_customer()
-        print('Shopping List: ' + str(self.shopping_list))        
+        # print('Shopping List: ' + str(self.shopping_list))        
     
 
 
@@ -168,10 +168,10 @@ class Shopping_sequence:
                         break
                         
 
-        else:
-            print('Shopping list empty, go to exit' + '\n')
-            print('Shopping Cart: ' + str(self.shopping_cart))
-            print('Path to last Product on List: ' + '\n' + str(self.path))
+        # else:
+        #     print('Shopping list empty, go to exit' + '\n')
+        #     print('Shopping Cart: ' + str(self.shopping_cart))
+        #     print('Path to last Product on List: ' + '\n' + str(self.path))
             # Graph().draw_customer_path(self.visited_isles)
             # Graph().draw_product_graph(self.shopping_cart)
             # Graph().add_to_weighted_product_graph(self.shopping_cart)

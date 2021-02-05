@@ -1,6 +1,8 @@
 import json
 import math
 import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
 from customer import Customer
 
 
@@ -11,26 +13,6 @@ with open('weighted_graph.json') as wg:
 
 
 matrix = np.matrix(wg['adjacent_matrix'])
-
-# sorted_weights = []
-
-# for x in wg['adjacent_matrix']: # x sind einzelne Reihen
-#     for element in x:
-#         sorted_weights.append(element)
-
-# sorted_weights.sort()
-
-
-# print(matrix)
-# print(matrix.argsort())
-
-# print(matrix.max())
-
-# print(math.floor(matrix.argmax()/len(matrix))) # index Product A
-
-# print(matrix.argmax()%len(matrix)) # index Product B
-
-# print(matrix[math.floor(matrix.argmax()/len(matrix)),matrix.argmax()%len(matrix)])
 
 
 class Optimization:
@@ -44,6 +26,11 @@ class Optimization:
         self.pairs = {}
         self.pairs['pairs'] = []
 
+
+        # länge der liste könnte quantile entscheiden? -> kurze listen bräuchten niedriegere verbindungswerte
+        self.pair_max_val = np.quantile(matrix, 0.98) # grenze, ab der verbindung von produkten zu klein ist um paare zu bilden
+        self.con_max_val = np.quantile(matrix, 0.90) # grenze, ab der Verbindung von produkten zu klein ist um teil-sortierte listen sie zu verketten
+
         self.runs = 0
         self.find_paires()
 
@@ -52,7 +39,7 @@ class Optimization:
 
         
 
-        while matrix.max() > 40: # ab wann ist maximaler gefundener wert zu klein für aussage, dass produkte beieinander liegen
+        while matrix.max() > self.pair_max_val: # ab wann ist maximaler gefundener wert zu klein für aussage, dass produkte beieinander liegen -> 90% quantil
             
             self.runs += 1
         
@@ -79,26 +66,6 @@ class Optimization:
                     stop = True
                     break
 
-                # for i, item in enumerate(value):
-                    
-                #     if wg['products'][pBind] == item and wg['products'][pAind] in self.usl: # wenn produkt in paaren gefunden wurde und keinen vorgänger hat, hinzufügen
-                #         if i == 0:
-
-                #             value.insert(i, wg['products'][pAind])
-                #             self.usl.remove(wg['products'][pAind])
-                #             matrix[pAind, pBind] = 0
-                #             stop = True
-                #             break
-
-                #     if wg['products'][pAind] == item and wg['products'][pBind] in self.usl: # Wenn produkt in pairs gefunden wurde und dieses keinen nachfolger hat, hinzufügen
-                #         if i == len(value)-1:
-
-                #             value.append(wg['products'][pBind])
-                #             self.usl.remove(wg['products'][pBind])
-                #             matrix[pAind, pBind] = 0
-                #             stop = True
-                #             break
-
             if stop:
                 continue
 
@@ -119,15 +86,6 @@ class Optimization:
                             matrix[pAind, pBind] = 0
                             stop = True
                             break
-
-                        # elif wg['products'][pAind] == self.pairs['pairs'][x][0] and wg['products'][pBind] == value[-1]: # element 1 erstes -> element 0 letztes
-                            
-                        #     # folgende logik evtl anpassen, wenn kantengewicht auch richtung vorgibt, entsteht durch folgende logik fehler in pair-listen
-                            
-                        #     value.extend(self.pairs['pairs'][x])
-                        #     self.pairs['pairs'].remove(self.pairs['pairs'][x])   
-                        #     matrix[pAind, pBind] = 0
-                        #     break
                 
                 if wg['products'][pAind] == self.pairs['pairs'][-1][-1] and wg['products'][pBind] == self.pairs['pairs'][0][0]: # element letztes letztes -> element erstes erstes
 
@@ -135,14 +93,6 @@ class Optimization:
                     self.pairs['pairs'].remove(self.pairs['pairs'][0])
                     matrix[pAind, pBind] = 0
                     stop = True
-                
-                # elif wg['products'][pAind] == self.pairs['pairs'][0][0] and wg['products'][pBind] == self.pairs['pairs'][-1][-1]: # element erstes erstes -> element letztes letztes
-                    
-                #     # folgende logik evtl anpassen, wenn kantengewicht auch richtung vorgibt, entsteht durch folgende logik fehler in pair-listen
-                    
-                #     self.pairs['pairs'][-1].extend(self.pairs['pairs'][0])
-                #     self.pairs['pairs'].remove(self.pairs['pairs'][0])
-                #     matrix[pAind, pBind] = 0
 
 
             if stop:
@@ -164,73 +114,122 @@ class Optimization:
         
         print('\n' + 'Restliste: ' + str(self.usl))
         print('\n' + 'Paare: ' + str(self.pairs))
+        print(matrix.max())
         print(self.runs)
 
-        self.connect_paires()
-        # was passiert, wenn liste so kurz, dass bisher keine gewichte gefunden wurde/ len(pairs)==0 ? Sonderfall implementieren 
+
+        if len(self.pairs['pairs']) == 0:
+            # was passiert, wenn liste so kurz, dass bisher keine gewichte gefunden wurde/ len(pairs)==0 ? Sonderfall implementieren 
+            return None
+        
+        
+
+        if self.usl:
+            self.connect_leftovers()
+
+        if len(self.pairs['pairs']) > 1:
+            self.connect_paires()
+
+
     
+
+    def connect_leftovers(self):
+
+        matrix = np.matrix(wg['adjacent_matrix'])
+
+
+        for x in range(0, len(self.usl)):
+
+            highest_weight = 0
+            listA = []
+            listB = []
+
+            for item in self.usl:
+
+                for value in self.pairs['pairs']:
+
+                    if matrix[wg['product_ids'][item], wg['product_ids'][value[0]]] > highest_weight:
+
+                        listA = item
+                        listB = value
+                        highest_weight = matrix[wg['product_ids'][item], wg['product_ids'][value[0]]]
+                    
+                    if matrix[wg['product_ids'][value[-1]], wg['product_ids'][item]] > highest_weight:
+
+                        listA = value
+                        listB = item
+                        highest_weight = matrix[wg['product_ids'][item], wg['product_ids'][value[0]]]
+            
+
+            print('highest lefotver: ' +  str(highest_weight))
+
+            if(highest_weight > self.con_max_val): # minimale verbindung anpassen
+                if isinstance(listB, str):
+                    self.pairs['pairs'].remove(listA)
+                    self.usl.remove(listB)
+                    listA.append(listB)
+                    self.pairs['pairs'].append(listA)
+
+                elif isinstance(listA, str):
+                    self.pairs['pairs'].remove(listB)
+                    self.usl.remove(listA)
+                    listB.insert(0, listA)
+                    self.pairs['pairs'].append(listB)
+        
+        print('\n' + 'Restliste: ' + str(self.usl))
+        print('\n' + 'Paare: ' + str(self.pairs))
+
+
+            
+
+
+
+
     def connect_paires(self):
 
         matrix = np.matrix(wg['adjacent_matrix'])
 
         # alle letzten mit allen ersten pair-listen vergleichen und größtes gewicht davon verbinden
 
-        highest_weight = 0
-        prodA = ''
-        prodB = ''
-        
-        # print(self.pairs['pairs'][1])
+        #solange bis len(pairs) == 1?
 
+        for x in range(0, len(self.pairs['pairs'])-1):
         # if len(self.pairs['pairs']) > 1:
 
-        #     for index, value in enumerate(self.pairs['pairs']):
+            listA = []
+            listB = []
+            highest_weight = 0
 
-        #         for x in range(index+1, len(self.pairs['pairs']-1)):
+            for index, value in enumerate(self.pairs['pairs']):
 
-        #             if value[len(value)-1] == self.pairs['pairs'][x][0]: # wenn letztes element mit ersten des nächsten pairs übereinstimmt # auf matrix werte übertragen!
+                for x in range(index+1, len(self.pairs['pairs'])-1):
                     
-        #             if self.pairs['pairs'][x][0] == value[len(value)-1]:
+                    if matrix[wg['product_ids'][value[-1]], wg['product_ids'] [self.pairs['pairs'][x][0] ]] > highest_weight:# letztes A element -> erstem des nächsten B
+                        
+                        listA = value
+                        listB = self.pairs['pairs'][x]
+                        highest_weight = matrix[wg['product_ids'][value[-1]], wg['product_ids'] [self.pairs['pairs'][x][0] ]]
+
+
             
-        #     if self.pairs['pairs'][len(self.pairs['pairs'])-1] == self.pairs['pairs'][0][0]:
-            
-        #     if self.pairs['pairs'][0][0] == self.pairs['pairs'][len(self.pairs['pairs'])-1]
+            if matrix[wg['product_ids'][self.pairs['pairs'][-1][-1]], wg['product_ids'][self.pairs['pairs'][0][0]]] > highest_weight: # letztes letztes element -> erstes erstes
 
+                listA = self.pairs['pairs'][-1]
+                listB = self.pairs['pairs'][0]
+                highest_weight = matrix[wg['product_ids'][self.pairs['pairs'][-1][-1]], wg['product_ids'][self.pairs['pairs'][0][0]]]
 
+            print('highest pair connect: ' + str(highest_weight))
 
+            if highest_weight > self.con_max_val and listA in self.pairs['pairs'] and listB in self.pairs['pairs']:# minimale verbindung anpassen >5
 
-
-
-
-
-
-
-
-
-
-            # if index > len(self.pair['pairs'][0]-1):
-            #     #         matrix nimmt nur int an, ID der string-produkte aus json file nehmen
-            #     if matrix[value[len(value)-1], self.pair['pairs'][0][index+1]] > heighest_weight: # value[len(value)-1]  -> self.pair['pairs'][0][index+1]
-
-            #         heighest_weight = matrix[value[len(value)-1],self.pair['pairs'][0][index+1]]
-            #         prodA = value[len(value)-1]
-            #         probB = self.pair['pairs'][0][index+1]
-
-            #     if matrix[self.pair['pairs'][0][index+1], value[len(value)-1]] > heighest_weight:
-
-            #         heighest_weight = matrix[self.pair['pairs'][0][index+1], value[len(value)-1]]
-            #         prodA = self.pair['pairs'][0][index+1]
-            #         prodB = value[len(value)-1]
-                
-
-            #     self.pair['pairs'][0][index+1] -> value[len(value)-1]
-
-            # elif index == len(self.pair['pairs'][0]-1):
-
-            #     value[len(value)-1] -> self.pair['pairs'][0][0]
-
-            #     self.pair['pairs'][0][0] -> value[len(value)-1]
-
+                self.pairs['pairs'].remove(listA)
+                self.pairs['pairs'].remove(listB)
+                listA.extend(listB)
+                self.pairs['pairs'].append(listA)
         
+        print('\n' + 'Restliste: ' + str(self.usl))
+        print('\n' + 'Paare: ' + str(self.pairs))
+        print('\n' + 'sorted lists: ' + str(len(self.pairs['pairs'])))
 
 
             
