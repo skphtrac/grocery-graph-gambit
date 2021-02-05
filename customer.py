@@ -17,7 +17,9 @@ class Customer:
         self.household = self.choose_household()
         self.shopping_type = self.choose_shopping_type()
         self.choose_segment()
-        self.shopping_amount = self.calc_shopping_amount(self.household, self.shopping_type)
+        # self.shopping_amount = self.calc_shopping_amount(self.household, self.shopping_type)
+        self.shopping_amount = 20
+
 
         self.shopping_list = []
         self.fill_shopping_list(self.shopping_list)
@@ -185,32 +187,14 @@ class Shopping_sequence:
         return None
 
 
-cus1 = Customer()
-# cus2 = Customer()
-# cus3 = Customer()
-# cus4 = Customer()
-# cus5 = Customer()
-# cus6 = Customer()
 
-# customers = [cus1, cus2, cus3, cus4, cus5, cus6]
+# shopping_sequences = {}
 
-# for Customer in customers:
-#     ss1 = Shopping_sequence(Customer)
+# for index in range(0, 10000):
+#     shopping_sequences['CID' + str(index)] = []
+#     shopping_sequences['CID' + str(index)].append(Shopping_sequence(Customer()).shopping_cart)
 
-# print(Shopping_sequence(cus1).shopping_cart)
-
-
-
-shopping_sequences = {}
-# data['cus1'] = []
-# data['cus1'].append(Shopping_sequence(cus1).shopping_cart)
-
-
-for index in range(0, 10000):
-    shopping_sequences['CID' + str(index)] = []
-    shopping_sequences['CID' + str(index)].append(Shopping_sequence(Customer()).shopping_cart)
-
-with open('shopping_sequences.json', 'w') as file:
-    json.dump(shopping_sequences, file, indent = 4)
+# with open('shopping_sequences.json', 'w') as file:
+#     json.dump(shopping_sequences, file, indent = 4)
 
 
