@@ -1,10 +1,11 @@
-# import numpy as np
-from functools import cached_property
-# import random
 import networkx as nx
 import matplotlib.pyplot as plt
  
+
+
+ 
 class Store():
+
     _assortment = {
         'MoPro': [
             'Meggle, gesalzen',
@@ -220,7 +221,6 @@ class Store():
 
     }
 
-
     _accessible_shelfs = {
         'Entrance': [],
         'A': [ 'Brot/Aufstrich', 'Obst' ],
@@ -245,7 +245,6 @@ class Store():
         'Exit': []
     }
 
-
     def get_segment(self, product):
 
         for key, value in self._assortment.items():
@@ -253,11 +252,9 @@ class Store():
                 if product == item:
                     return key
 
-        return "key doesn't exist"
+        return 'product not found'
 
 
-
-weighted_products = {}
 
 class Graph:
 
@@ -265,15 +262,13 @@ class Graph:
 
         self.store_graph = nx.DiGraph()
         self.customer_store_graph = nx.DiGraph()
-
-        self.weight_store_graph = nx.Graph()
-
-        
         
         self.store_graph.add_nodes_from(Store._layout_edges.keys())
-
         self.position_nodes(self.store_graph)
-        self.make_store_layout()
+
+        for key in Store._layout_edges.keys():
+            for value in Store._layout_edges.get(key):
+                self.store_graph.add_edge(key,value)
 
     def position_nodes(self, graph1):
 
@@ -302,77 +297,28 @@ class Graph:
         self.store_nodes_pos = nx.get_node_attributes(self.store_graph, 'pos')
     
     def draw_customer_path(self, path):
-        
-        
 
-        path_to_exit = nx.bidirectional_shortest_path(self.store_graph, path[len(path)-1], 'Exit')
-        
-        for x in range(1, len(path_to_exit)):
-            path.append(path_to_exit[x])
+        path_to_exit = nx.bidirectional_shortest_path(self.store_graph, path[-1], 'Exit')
+
+        path.extend(path_to_exit)
+
+        if 'X1' in path:
+            path.remove('X1')
+        if 'X2' in path:
+            path.remove('X2')
 
         for x in range(0, len(path)-1):
             self.customer_store_graph.add_edge(path[x], path[x+1])
         
-        print('Path to Exit: ' + '\n' + str(path_to_exit))
+        print('Customer Path: ' + '\n' + str(path))
+
         self.draw_graph(self.customer_store_graph)
 
 
-    def make_store_layout(self):
-
-        for x in Store._layout_edges.keys():
-            for y in Store._layout_edges.get(x):
-                self.store_graph.add_edge(x,y)
-
-        # self.draw_graph(self.store_graph)
-
-    def draw_weighted_store_layout(self): #Gewichtung überarbeiten
-
-        # self.position_nodes(self.weight_store_graph)
-
-        
-        self.store_graph.add_edge('Entrance','A', weight = 0)
-        self.store_graph.add_edge('A','B', weight = 1.0)
-        self.store_graph.add_edge('B','C', weight = 1.0)
-        self.store_graph.add_edge('C','D', weight = 1.0)
-        self.store_graph.add_edge('D','E', weight = 1.0)
-        self.store_graph.add_edge('E','F', weight = 1.0)
-        self.store_graph.add_edge('F','G', weight = 1.0)
-        self.store_graph.add_edge('G','H', weight = 1.0)
-        self.store_graph.add_edge('H','I', weight = 1.0)
-        self.store_graph.add_edge('I','J', weight = 1.0)
-        self.store_graph.add_edge('J','K', weight = 1.0)
-        self.store_graph.add_edge('C','P', weight = 2.0)
-        self.store_graph.add_edge('C','O', weight = 3.0)
-        self.store_graph.add_edge('C','L', weight = 4.0)
-        self.store_graph.add_edge('C','J', weight = 5.0)
-        self.store_graph.add_edge('C','I', weight = 5.0)
-        self.store_graph.add_edge('P','D', weight = 2.0)
-        self.store_graph.add_edge('P','O', weight = 2.0)
-        self.store_graph.add_edge('P','Q', weight = 1.0)
-        self.store_graph.add_edge('P','L', weight = 3.0)
-        self.store_graph.add_edge('P','J', weight = 4.0)
-        self.store_graph.add_edge('P','I', weight = 4.0)
-        self.store_graph.add_edge('O','D', weight = 3.0)
-        self.store_graph.add_edge('O','I', weight = 3.0)
-        self.store_graph.add_edge('O','J', weight = 3.0)
-        self.store_graph.add_edge('L','D', weight = 4.0)
-        self.store_graph.add_edge('L','J', weight = 2.0)
-        self.store_graph.add_edge('L','I', weight = 2.0)
-        self.store_graph.add_edge('L','M', weight = 1.0)
-        self.store_graph.add_edge('M','N', weight = 1.0)
-        self.store_graph.add_edge('J','D', weight = 5.0)
-        self.store_graph.add_edge('Q','O', weight = 2.0)
-        self.store_graph.add_edge('Q','N', weight = 3.0)
-        self.store_graph.add_edge('Q','K', weight = 4.0)
-        self.store_graph.add_edge('O','N', weight = 2.0)
-        self.store_graph.add_edge('O','K', weight = 3.0)
-        self.store_graph.add_edge('N','K', weight = 2.0)
-        self.store_graph.add_edge('Q','Exit', weight = 3.0)
-        self.store_graph.add_edge('O','Exit', weight = 2.0)
-        self.store_graph.add_edge('N','Exit', weight = 2.0)
-        self.store_graph.add_edge('K','Exit', weight = 3.0)
+    def draw_store_layout(self):
 
         self.draw_graph(self.store_graph)
+
 
     def draw_graph(self, graph):
         nx.draw_networkx(graph, self.store_nodes_pos, node_size = 450)
@@ -381,69 +327,4 @@ class Graph:
         plt.axis('off')
         plt.show()
 
-
-    def add_to_weighted_product_graph(self, products):
-
-        for x in range(0, len(products)-1):
-            if products[x] in weighted_products:
-                
-                value_exists = False
-
-                # prüfe, ob value schon vorhanden ist, dann nur wert erhöhen
-                for key in weighted_products:
-                    if key == products[x]:
-
-                        for y in range(0, len(weighted_products[key])-1):
-
-                            
-                            if len(weighted_products[key][0])>=2:
-
-                                # print('\n')
-                                # print('key: ' + str(weighted_products[key]))
-                                # print('following product: ' + str(weighted_products[key][y]))
-                                # print('amount: ' + str(weighted_products[key][y+1]))
-                                # print('compare to: ' + str(products[x+1]))
-
-                                if weighted_products[key][y] == products[x+1]:
-                                    value_exists = True
-                                    weighted_products[key][y+1] += 1
-
-                            else:
-                                if weighted_products[key][y] == products[x+1]:
-                                    value_exists = True
-                                    weighted_products[key][0][y+1] += 1
-
-                        break
-                            
-                # füge key mit folgendem artikel als value hinzu
-                if not value_exists:
-
-                    new_value = [products[x+1], 1]
-                    weighted_products[products[x]].append(new_value)
-
-            else:
-                weighted_products[products[x]] = [products[x+1], 1]
-
-        for keys, values in weighted_products.items():
-            print((str(keys) + ': ' + str(values)))
-
-        print('key length: '+ str(len(weighted_products)))
-
-            
-
-
-    def draw_product_graph(self, products):
-
-        product_graph = nx.DiGraph()
-        product_graph.add_nodes_from(products)
-
-        for x in range(0, len(products)-1):
-            product_graph.add_edge(products[x], products[x+1])
-        
-        nx.draw_networkx(product_graph, pos=None, node_size = 100)
-        plt.axis('off')
-        plt.show()
-
-
-
-
+# Graph().draw_store_layout()

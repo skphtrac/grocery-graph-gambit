@@ -1,11 +1,10 @@
 import json
 import numpy as np
-import networkx as nx
-import matplotlib.pyplot as plt
 
 
 
-class WeightedGraph:
+
+class Weighted_Directed_Graph:
 
     def __init__(self, size):
 
@@ -13,6 +12,7 @@ class WeightedGraph:
         
         for x in range(size):
             self.adj_matrix.append([0 for x in range(size)])
+
         self.size = size
        
     
@@ -43,22 +43,22 @@ for key in ss:
     for x in range(0, len(ss[key][0])):
         unique_products.append(ss[key][0][x])
 
-unique_products = list(set(unique_products)) # alle uniquen products aus allen shopping sequences
+unique_products = list(set(unique_products)) # products collected in simulated shopping sequences without duplicates
 
 
 
-product_ids = {} # Dictionary mit Produkten und dazugehöriger ID zum bestimmen der Matrix-Plätze
+product_ids = {} # to determine adjacency matrix index
 
 for element in unique_products:
     product_ids[element] = unique_products.index(element)
 
 
 
-matrix = WeightedGraph(len(unique_products))
+matrix = Weighted_Directed_Graph(len(unique_products))
 
 for key in ss:
     for x in range(0, len(ss[key][0])-1):
-        matrix.increase_weight(product_ids[ss[key][0][x]], product_ids[ss[key][0][x+1]])
+        matrix.increase_weight(product_ids[ss[key][0][x]], product_ids[ss[key][0][x+1]]) # fills adjacency matrix with simulated shopping sequence products
 
 
 
@@ -70,6 +70,11 @@ weighted_graph['adjacent_matrix'] = matrix.adj_matrix
 with open('weighted_graph.json', 'w') as file:
     json.dump(weighted_graph, file, indent = 4)
 
+
+
+
+
+# alles hierdrunter kann gelöscht werden, gibt nach größe sortierte matrix-werte wieder
 
 with open('weighted_graph.json') as wg:
     wg = json.load(wg)
@@ -86,35 +91,3 @@ sorted_weights.sort()
 print(sorted_weights)
 
 print(np.quantile(sorted_weights, 0.90))
-# plt.boxplot(sorted_weights)
-# plt.show()
-
-
-
-
-# B = np.matrix(matrix.adj_matrix)
-
-# D = nx.from_numpy_matrix(B, create_using=nx.DiGraph)
-
-# C = nx.adjacency_matrix(D)
-
-
-
-# print(B)
-
-# prod = list(product_ids.keys())
-
-# fig, ax = plt.subplots(figsize=(len(B)*1.2,len(B)*1.2))
-# ax.matshow(B, cmap='seismic')
-
-# for (i, j), z in np.ndenumerate(B):
-#     ax.text(j, i, '{:0.1f}'.format(z), ha='center', va='center', bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.3'))
-
-
-# ax.set_xticks(np.arange(len(B)))
-# ax.set_yticks(np.arange(len(B)))
-
-# ax.set_yticklabels(['']+prod)   # startet immer mit zweiter reihe?
-
-
-# plt.savefig('product_matrix.png')

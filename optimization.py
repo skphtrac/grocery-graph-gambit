@@ -2,75 +2,62 @@ import json
 import math
 import collections
 import numpy as np
-import networkx as nx
-import matplotlib.pyplot as plt
-from customer import Customer
-from layout import Store
+from shopping_sequence_simulation import Customer
+# from layout import Store
+
 
 
 with open('weighted_graph.json') as wg:
     wg = json.load(wg)
 
-
-
-
 matrix = np.matrix(wg['adjacent_matrix'])
+
 
 
 class Optimization:
 
     def __init__(self, unsorted_list):
 
-        self.dupl = [item for item, count in collections.Counter(unsorted_list).items() if count > 1]
+        self.dupl = [item for item, count in collections.Counter(unsorted_list).items() if count > 1] # duplicate products, are readded at the end of optimization
 
         self.usl = list(set(unsorted_list))
 
-        # doppelte einträge aus liste nehmen und am ende nach jeweiligen werten einfügen
+        self.bonds = {}
+        self.bonds['bonds'] = [] # dict with lists of found connected products with high edge weights
 
-        self.pairs = {}
-        self.pairs['pairs'] = []
+        self.pair_max_val = np.quantile(matrix, 0.90) # value determines when edge weights are no longer high enough to make assumptions to add new product connections
+        self.con_max_val = np.quantile(matrix, 0.70) # value determines when edge weights are no longer high enough to make assumptions to order existing product connections
 
-
-        # länge der liste könnte quantile entscheiden? -> kurze listen bräuchten niedriegere verbindungswerte
-        self.pair_max_val = np.quantile(matrix, 0.90) # grenze, ab der verbindung von produkten zu klein ist um paare zu bilden
-        self.con_max_val = np.quantile(matrix, 0.70) # grenze, ab der Verbindung von produkten zu klein ist um teil-sortierte listen sie zu verketten
-
-        self.runs = 0
-        self.find_paires()
+        self.find_bonds()
 
         # if self.usl:
         #     self.connect_leftovers()
 
-        # if len(self.pairs['pairs']) > 1:
-        #     self.connect_paires()
+        # if len(self.bonds['bonds']) > 1:
+        #     self.connect_bonds()
 
         if self.dupl:
             self.reinsert_duplicates()
 
-        for lists in self.pairs['pairs']:
-            for value in lists:
-                print(Store().get_segment(value))
+        # for lists in self.bonds['bonds']:
+        #     for value in lists:
+        #         print(Store().get_segment(value))
             
-            print('\n')
+        #     print('\n')
 
 
 
    
-    def find_paires(self):
+    def find_bonds(self):
 
-        
-
-        while matrix.max() > self.pair_max_val: # ab wann ist maximaler gefundener wert zu klein für aussage, dass produkte beieinander liegen -> 90% quantil
+        while matrix.max() > self.pair_max_val:
             
-            self.runs += 1
-        
-
-            pAind = math.floor(matrix.argmax()/len(matrix))
-            pBind = matrix.argmax()%len(matrix)
-
             stop = False
+        
+            pAind = math.floor(matrix.argmax()/len(matrix))
+            pBind = matrix.argmax()%len(matrix)            
 
-            for value in self.pairs['pairs']:
+            for value in self.bonds['bonds']: # check if highest edge weight connects previously added product and product from unsorted product list
                 
                 if wg['products'][pAind] == value[-1] and wg['products'][pBind] in self.usl:
 
@@ -92,26 +79,24 @@ class Optimization:
 
 
 
+            if len(self.bonds['bonds']) > 1: # check if heighest edge weight connects two previously added products
 
-                # testen, ob höchste gewicht-beziehung in pairs ist
-            if len(self.pairs['pairs']) > 1:
+                for index, value in enumerate(self.bonds['bonds']):
 
-                for index, value in enumerate(self.pairs['pairs']):
+                    for x in range(index+1, len(self.bonds['bonds'])-1):
 
-                    for x in range(index+1, len(self.pairs['pairs'])-1):
-
-                        if wg['products'][pAind] == value[-1] and wg['products'][pBind] == self.pairs['pairs'][x][0]: # zB element 0 letztes -> element 1 erstes #wenn letztes element mit ersten des nächsten pairs übereinstimmt # auf matrix werte übertragen!
+                        if wg['products'][pAind] == value[-1] and wg['products'][pBind] == self.bonds['bonds'][x][0]: 
                             
-                            value.extend(self.pairs['pairs'][x])
-                            self.pairs['pairs'].remove(self.pairs['pairs'][x])
+                            value.extend(self.bonds['bonds'][x])
+                            self.bonds['bonds'].remove(self.bonds['bonds'][x])
                             matrix[pAind, pBind] = 0
                             stop = True
                             break
                 
-                if wg['products'][pAind] == self.pairs['pairs'][-1][-1] and wg['products'][pBind] == self.pairs['pairs'][0][0]: # element letztes letztes -> element erstes erstes
+                if wg['products'][pAind] == self.bonds['bonds'][-1][-1] and wg['products'][pBind] == self.bonds['bonds'][0][0]:
 
-                    self.pairs['pairs'][-1].extend(self.pairs['pairs'][0])
-                    self.pairs['pairs'].remove(self.pairs['pairs'][0])
+                    self.bonds['bonds'][-1].extend(self.bonds['bonds'][0])
+                    self.bonds['bonds'].remove(self.bonds['bonds'][0])
                     matrix[pAind, pBind] = 0
                     stop = True
 
@@ -121,11 +106,10 @@ class Optimization:
 
 
 
-
-            if wg['products'][pAind] in self.usl and wg['products'][pBind] in self.usl:
+            if wg['products'][pAind] in self.usl and wg['products'][pBind] in self.usl: # check if highest edge weight connects two products from unsorted product list
 
                 new_pair = [wg['products'][pAind], wg['products'][pBind]]
-                self.pairs['pairs'].append(new_pair)
+                self.bonds['bonds'].append(new_pair)
                 self.usl.remove(wg['products'][pAind])
                 self.usl.remove(wg['products'][pBind])
 
@@ -134,25 +118,18 @@ class Optimization:
             matrix[pAind, pBind] = 0
         
         print('\n' + 'Restliste: ' + str(self.usl))
-        print('\n' + 'Paare: ' + str(self.pairs))
+        print('\n' + 'Paare: ' + str(self.bonds))
         print(matrix.max())
-        print(self.runs)
 
 
-        if len(self.pairs['pairs']) == 0:
-            print('Kantengewichte zu klein, um gehaltvolle Annahmen über Produktverbindungen zu treffen')
-        
-        
-
-        
+        if len(self.bonds['bonds']) == 0:
+            print('Edge weights too low to make assumptions')
+         
 
 
-    
+    def connect_leftovers(self): # find highest edge weight between leftover products and existing product bonds
 
-    def connect_leftovers(self):
-
-        matrix = np.matrix(wg['adjacent_matrix'])
-
+        matrix = np.matrix(wg['adjacent_matrix']) # reset matrix values
 
         for x in range(0, len(self.usl)):
 
@@ -162,7 +139,7 @@ class Optimization:
 
             for item in self.usl:
 
-                for value in self.pairs['pairs']:
+                for value in self.bonds['bonds']:
 
                     if matrix[wg['product_ids'][item], wg['product_ids'][value[0]]] > highest_weight:
 
@@ -176,83 +153,69 @@ class Optimization:
                         listB = item
                         highest_weight = matrix[wg['product_ids'][item], wg['product_ids'][value[0]]]
             
-
-            print('highest lefotver: ' +  str(highest_weight))
-
-            if(highest_weight > self.con_max_val): # minimale verbindung anpassen
+            if(highest_weight > self.con_max_val):
                 if isinstance(listB, str):
-                    self.pairs['pairs'].remove(listA)
+                    self.bonds['bonds'].remove(listA)
                     self.usl.remove(listB)
                     listA.append(listB)
-                    self.pairs['pairs'].append(listA)
+                    self.bonds['bonds'].append(listA)
 
                 elif isinstance(listA, str):
-                    self.pairs['pairs'].remove(listB)
+                    self.bonds['bonds'].remove(listB)
                     self.usl.remove(listA)
                     listB.insert(0, listA)
-                    self.pairs['pairs'].append(listB)
+                    self.bonds['bonds'].append(listB)
         
         print('\n' + 'Restliste: ' + str(self.usl))
-        print('\n' + 'Paare: ' + str(self.pairs))
-
-
-            
+        print('\n' + 'Paare: ' + str(self.bonds))
 
 
 
+    def connect_bonds(self): # find heighest edge weights between existing product bonds
 
-    def connect_paires(self):
+        matrix = np.matrix(wg['adjacent_matrix']) # reset matrix values
 
-        matrix = np.matrix(wg['adjacent_matrix'])
+        for x in range(0, len(self.bonds['bonds'])-1):
 
-        # alle letzten mit allen ersten pair-listen vergleichen und größtes gewicht davon verbinden
-
-        #solange bis len(pairs) == 1?
-
-        for x in range(0, len(self.pairs['pairs'])-1):
-        # if len(self.pairs['pairs']) > 1:
-
+            highest_weight = 0
             listA = []
             listB = []
-            highest_weight = 0
+            
+            for index, value in enumerate(self.bonds['bonds']):
 
-            for index, value in enumerate(self.pairs['pairs']):
-
-                for x in range(index+1, len(self.pairs['pairs'])-1):
+                for x in range(index+1, len(self.bonds['bonds'])-1):
                     
-                    if matrix[wg['product_ids'][value[-1]], wg['product_ids'] [self.pairs['pairs'][x][0] ]] > highest_weight:# letztes A element -> erstem des nächsten B
+                    if matrix[wg['product_ids'][value[-1]], wg['product_ids'] [self.bonds['bonds'][x][0] ]] > highest_weight:
                         
                         listA = value
-                        listB = self.pairs['pairs'][x]
-                        highest_weight = matrix[wg['product_ids'][value[-1]], wg['product_ids'] [self.pairs['pairs'][x][0] ]]
-
+                        listB = self.bonds['bonds'][x]
+                        highest_weight = matrix[wg['product_ids'][value[-1]], wg['product_ids'] [self.bonds['bonds'][x][0] ]]
 
             
-            if matrix[wg['product_ids'][self.pairs['pairs'][-1][-1]], wg['product_ids'][self.pairs['pairs'][0][0]]] > highest_weight: # letztes letztes element -> erstes erstes
+            if matrix[wg['product_ids'][self.bonds['bonds'][-1][-1]], wg['product_ids'][self.bonds['bonds'][0][0]]] > highest_weight:
 
-                listA = self.pairs['pairs'][-1]
-                listB = self.pairs['pairs'][0]
-                highest_weight = matrix[wg['product_ids'][self.pairs['pairs'][-1][-1]], wg['product_ids'][self.pairs['pairs'][0][0]]]
+                listA = self.bonds['bonds'][-1]
+                listB = self.bonds['bonds'][0]
+                highest_weight = matrix[wg['product_ids'][self.bonds['bonds'][-1][-1]], wg['product_ids'][self.bonds['bonds'][0][0]]]
 
-            print('highest pair connect: ' + str(highest_weight))
 
-            if highest_weight > self.con_max_val and listA in self.pairs['pairs'] and listB in self.pairs['pairs']:# minimale verbindung anpassen >5
+            if highest_weight > self.con_max_val and listA in self.bonds['bonds'] and listB in self.bonds['bonds']:
 
-                self.pairs['pairs'].remove(listA)
-                self.pairs['pairs'].remove(listB)
+                self.bonds['bonds'].remove(listA)
+                self.bonds['bonds'].remove(listB)
                 listA.extend(listB)
-                self.pairs['pairs'].append(listA)
+                self.bonds['bonds'].append(listA)
         
         print('\n' + 'Restliste: ' + str(self.usl))
-        print('\n' + 'Paare: ' + str(self.pairs))
-        print('\n' + 'sorted lists: ' + str(len(self.pairs['pairs'])))
+        print('\n' + 'Paare: ' + str(self.bonds))
+        print('\n' + 'sorted lists: ' + str(len(self.bonds['bonds'])))
 
 
 
     def reinsert_duplicates(self):
         
         for item in self.dupl:
-            for lists in self.pairs['pairs']:
+            for lists in self.bonds['bonds']:
                 for index, value in enumerate(lists):
                     if item == value:
                         lists.insert(index, item)
@@ -260,7 +223,6 @@ class Optimization:
 
 
 
-            
 
 opt = Optimization(Customer().shopping_list)
 
