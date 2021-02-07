@@ -176,15 +176,6 @@ class Shopping_sequence:
             # Graph().draw_product_graph(self.shopping_cart)
             # Graph().add_to_weighted_product_graph(self.shopping_cart)
 
- 
-
-
-    def decide(self):
-        #Mögliche entscheidung treffen, wurde ein produkt gefunden?
-            # ja -> produkt von liste streichen?
-            # nein -> weitergehen, wohin? mögliche knotenpunkte/wahrscheinlichkeiten der knotenpunkte abwägen
-                # letzten knotenpunkt speichern, somit prüfen, wo man zuletzt war um so stets vorwärts in eine richutng zu gehen
-        return None
 
 
 
