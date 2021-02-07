@@ -85,7 +85,7 @@ for x in wg['adjacent_matrix']: # x sind einzelne Reihen
 sorted_weights.sort()
 print(sorted_weights)
 
-print(np.quantile(sorted_weights, 0.80))
+print(np.quantile(sorted_weights, 0.90))
 # plt.boxplot(sorted_weights)
 # plt.show()
 

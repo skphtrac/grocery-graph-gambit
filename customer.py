@@ -18,7 +18,7 @@ class Customer:
         self.shopping_type = self.choose_shopping_type()
         self.choose_segment()
         # self.shopping_amount = self.calc_shopping_amount(self.household, self.shopping_type)
-        self.shopping_amount = 20
+        self.shopping_amount = 10
 
 
         self.shopping_list = []
@@ -190,7 +190,7 @@ class Shopping_sequence:
 
 # shopping_sequences = {}
 
-# for index in range(0, 10000):
+# for index in range(0, 100000):
 #     shopping_sequences['CID' + str(index)] = []
 #     shopping_sequences['CID' + str(index)].append(Shopping_sequence(Customer()).shopping_cart)
 

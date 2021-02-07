@@ -220,52 +220,6 @@ class Store():
 
     }
 
-    # _layout_edges = [
-    #     ('start', 'A', 0),
-    #     ('A', 'B', 1),
-    #     ('B', 'C', 1),
-    #     ('C', 'D', 1),
-    #     ('D', 'E', 1),
-    #     ('E', 'F', 1),
-    #     ('F', 'G', 1),
-    #     ('G', 'H', 1),
-    #     ('H', 'I', 1),
-    #     ('B', 'X1', .5),
-    #     ('X1', 'H', .5),
-    #     ('X1', 'O', .5),
-    #     ('X1', 'N', .5),
-    #     ('X1', 'K', .5),
-    #     ('X1', 'I', .5),
-    #     ('O', 'P', 1),
-    #     ('K', 'L', 1),
-    #     ('L', 'M', 1),
-    #     ('I', 'J', 1),
-    #     ('P', 'X2', .5),
-    #     ('N', 'X2', .5),
-    #     ('M', 'X2', .5),
-    #     ('J', 'X2', .5),
-    #     ('X2', 'end', 0)
-    # ]
-    
-    # _layout_shelfs_by_vertices = {
-    #     'A': [ 'Brot/Aufstrich' ],
-    #     'B': [ 'Backstation' ],
-    #     'C': [ 'Müsli'],
-    #     'D': [ 'FG-nass' ],
-    #     'E': [ 'Fleisch' ],
-    #     'F': [ 'MoPro'],
-    #     'G': [ 'FG-TK'],
-    #     'H': [ 'Eis' ],
-    #     'I': [ 'Milch' ],
-    #     'J': [ 'Konserven', 'Drogerie' ],
-    #     'K': [ 'Presse', 'Hygiene'],
-    #     'L': [ 'Gewürze/Saucen', 'FG-trocken' ],
-    #     'M': [ 'Nudeln/Reis' ],
-    #     'N': [ 'Backen', 'Snacks' ],
-    #     'O': [ 'N-Alk', 'Alk' ],
-    #     'P': [ 'Tee/Kaffee' ],
-    #     'Q': [ 'Gebäck/Schokolade' ]
-    # }
 
     _accessible_shelfs = {
         'Entrance': [],
@@ -292,34 +246,16 @@ class Store():
     }
 
 
-    # _layout = [
-    #     ('start', 'Brot/Auftrich'),
-    #     ('Brot/Auftrich', 'Müsli'),
-    #     ('Müsli', 'FG-nass'),
-    #     ('Müsli', 'X1'),
-    #     ('FG-nass', 'Fleisch'),
-    #     ('Fleisch', 'MoPro'),
-    #     ('MoPro', 'FG-TK'),
-    #     ('FG-TK', 'Eis'),
-    #     ('Eis', 'Milch'),
-    #     ('Milch', 'X1'),
-    #     ('Milch', '')
-    # ]
-    
-    # def compute_path_cost():
-    
-  
-    # def random_sample(self, len_mu=15, len_sigma=3):
-    #     return random.sample(self.flat_assortment, int(abs(random.gauss(len_mu, len_sigma))))
-        
-    # @cached_property
-    # def flat_assortment(self):
-    #     flat_assortment = []
-        
-    #     for category_names, category_articles in self._assortment.items():
-    #         flat_assortment.extend(category_articles)
- 
-    #     return flat_assortment
+    def get_segment(self, product):
+
+        for key, value in self._assortment.items():
+            for item in value:
+                if product == item:
+                    return key
+
+        return "key doesn't exist"
+
+
 
 weighted_products = {}
 
@@ -510,46 +446,4 @@ class Graph:
 
 
 
-
-
-
-
-gle = ['B',3]
-gleb = ['C', 0]
-
-bla = {}
-bla['A'] = gle, gleb
-bla['B'] = gleb
-bla['C'] = ['D', 2], gle
-
-
-ble = ['A', 'B', 'C']
-
-
-
-# for index in range(0, len(ble)-1):
-
-#     for key in bla:
-#         if key == ble[index]:
-#             for y in range(0, len(bla[key])-1):
-
-#                 if len(bla[key][0])>=2:
-#                     if bla[key][0][y] == ble[1]:
-#                         bla[key][0][y+1] += 1
-#                 else:
-#                     if bla[key][y] == ble[1]:
-#                         bla[key][y+1] += 1
-
-                
-
-
-
-
-# for key1 in ble:
-#     print(key1)
-
-#     for key2 in bla:
-#         if key1 == key2:
-#             # print(bla[key2])
-#             print(bla[key2][0])
 

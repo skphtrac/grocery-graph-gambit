@@ -1,9 +1,11 @@
 import json
 import math
+import collections
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 from customer import Customer
+from layout import Store
 
 
 with open('weighted_graph.json') as wg:
@@ -18,8 +20,10 @@ matrix = np.matrix(wg['adjacent_matrix'])
 class Optimization:
 
     def __init__(self, unsorted_list):
-        self.usl = set(unsorted_list)
-        self.usl = list(self.usl)
+
+        self.dupl = [item for item, count in collections.Counter(unsorted_list).items() if count > 1]
+
+        self.usl = list(set(unsorted_list))
 
         # doppelte einträge aus liste nehmen und am ende nach jeweiligen werten einfügen
 
@@ -28,13 +32,30 @@ class Optimization:
 
 
         # länge der liste könnte quantile entscheiden? -> kurze listen bräuchten niedriegere verbindungswerte
-        self.pair_max_val = np.quantile(matrix, 0.98) # grenze, ab der verbindung von produkten zu klein ist um paare zu bilden
-        self.con_max_val = np.quantile(matrix, 0.90) # grenze, ab der Verbindung von produkten zu klein ist um teil-sortierte listen sie zu verketten
+        self.pair_max_val = np.quantile(matrix, 0.90) # grenze, ab der verbindung von produkten zu klein ist um paare zu bilden
+        self.con_max_val = np.quantile(matrix, 0.70) # grenze, ab der Verbindung von produkten zu klein ist um teil-sortierte listen sie zu verketten
 
         self.runs = 0
         self.find_paires()
 
+        # if self.usl:
+        #     self.connect_leftovers()
 
+        # if len(self.pairs['pairs']) > 1:
+        #     self.connect_paires()
+
+        if self.dupl:
+            self.reinsert_duplicates()
+
+        for lists in self.pairs['pairs']:
+            for value in lists:
+                print(Store().get_segment(value))
+            
+            print('\n')
+
+
+
+   
     def find_paires(self):
 
         
@@ -119,16 +140,11 @@ class Optimization:
 
 
         if len(self.pairs['pairs']) == 0:
-            # was passiert, wenn liste so kurz, dass bisher keine gewichte gefunden wurde/ len(pairs)==0 ? Sonderfall implementieren 
-            return None
+            print('Kantengewichte zu klein, um gehaltvolle Annahmen über Produktverbindungen zu treffen')
         
         
 
-        if self.usl:
-            self.connect_leftovers()
-
-        if len(self.pairs['pairs']) > 1:
-            self.connect_paires()
+        
 
 
     
@@ -230,6 +246,18 @@ class Optimization:
         print('\n' + 'Restliste: ' + str(self.usl))
         print('\n' + 'Paare: ' + str(self.pairs))
         print('\n' + 'sorted lists: ' + str(len(self.pairs['pairs'])))
+
+
+
+    def reinsert_duplicates(self):
+        
+        for item in self.dupl:
+            for lists in self.pairs['pairs']:
+                for index, value in enumerate(lists):
+                    if item == value:
+                        lists.insert(index, item)
+                        break
+
 
 
             
