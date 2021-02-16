@@ -1,5 +1,6 @@
 import json
 import numpy as np
+from shopping_sequence_simulation import create_shopping_sequences
 
 
 
@@ -32,6 +33,7 @@ class Weighted_Directed_Graph:
 
 
 
+create_shopping_sequences(5000)
 
 with open('shopping_sequences.json') as ss:
     ss = json.load(ss)
@@ -69,25 +71,3 @@ weighted_graph['adjacent_matrix'] = matrix.adj_matrix
 
 with open('weighted_graph.json', 'w') as file:
     json.dump(weighted_graph, file, indent = 4)
-
-
-
-
-
-# alles hierdrunter kann gelöscht werden, gibt nach größe sortierte matrix-werte wieder
-
-with open('weighted_graph.json') as wg:
-    wg = json.load(wg)
-
-
-sorted_weights = []
-
-for x in wg['adjacent_matrix']: # x sind einzelne Reihen
-    for element in x:
-        sorted_weights.append(element)
-
-
-sorted_weights.sort()
-print(sorted_weights)
-
-print(np.quantile(sorted_weights, 0.90))

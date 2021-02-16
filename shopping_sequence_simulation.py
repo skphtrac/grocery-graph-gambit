@@ -6,7 +6,6 @@ from layout import Graph
 
 
 
-
 class Customer:
 
     def __init__(self):
@@ -36,7 +35,9 @@ class Shopping_sequence:
     def __init__(self, customer):
 
         self.customer = customer
+
         self.path = []                      # visited nodes 
+        self.compare_counter = 0
         self.visited_isles = []             # path without decision-nodes
 
         self.shopping_cart = []             # list of products in the order they were collected
@@ -79,6 +80,9 @@ class Shopping_sequence:
                     if next_prod:
                         next_prod = False
                         break
+                
+                self.compare_counter += 1
+
 
             for x in self.shopping_cart:
                 if x in self.customer.shopping_list:
@@ -105,7 +109,8 @@ class Shopping_sequence:
         #     print('Path to last Product on List: ' + '\n' + str(self.path))
         #     Graph().draw_customer_path(self.visited_isles)
 
-
+    def get_compare_count(self):
+        return self.compare_counter
 
 
 def create_shopping_sequences(customer_amount):
@@ -121,5 +126,3 @@ def create_shopping_sequences(customer_amount):
     
     print('Simulated ' + str(customer_amount) + ' shopping sequences')
 
-
-# create_shopping_sequences(50000)

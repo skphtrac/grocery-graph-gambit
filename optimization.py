@@ -3,7 +3,7 @@ import math
 import collections
 import numpy as np
 from shopping_sequence_simulation import Customer
-# from layout import Store
+from layout import Store
 
 
 
@@ -21,7 +21,6 @@ class Optimization:
         self.dupl = [item for item, count in collections.Counter(unsorted_list).items() if count > 1] # duplicate products, are readded at the end of optimization
 
         self.usl = list(set(unsorted_list))
-
         self.bonds = {}
         self.bonds['bonds'] = [] # dict with lists of found connected products with high edge weights
 
@@ -30,21 +29,18 @@ class Optimization:
 
         self.find_bonds()
 
-        # if self.usl:
-        #     self.connect_leftovers()
+        if self.usl:
+            self.connect_leftovers()
 
-        # if len(self.bonds['bonds']) > 1:
-        #     self.connect_bonds()
-
+        if len(self.bonds['bonds']) > 1:
+            self.connect_bonds()
+            
         if self.dupl:
             self.reinsert_duplicates()
 
-        # for lists in self.bonds['bonds']:
-        #     for value in lists:
-        #         print(Store().get_segment(value))
-            
-        #     print('\n')
-
+        print('Optimization complete:')
+        print('rest products: ' + str(self.usl))
+        print('product bonds: ' + str(self.bonds['bonds']))
 
 
    
@@ -112,14 +108,8 @@ class Optimization:
                 self.bonds['bonds'].append(new_pair)
                 self.usl.remove(wg['products'][pAind])
                 self.usl.remove(wg['products'][pBind])
-
-                print(matrix[math.floor(matrix.argmax()/len(matrix)),matrix.argmax()%len(matrix)])
             
             matrix[pAind, pBind] = 0
-        
-        print('\n' + 'Restliste: ' + str(self.usl))
-        print('\n' + 'Paare: ' + str(self.bonds))
-        print(matrix.max())
 
 
         if len(self.bonds['bonds']) == 0:
@@ -165,10 +155,6 @@ class Optimization:
                     self.usl.remove(listA)
                     listB.insert(0, listA)
                     self.bonds['bonds'].append(listB)
-        
-        print('\n' + 'Restliste: ' + str(self.usl))
-        print('\n' + 'Paare: ' + str(self.bonds))
-
 
 
     def connect_bonds(self): # find heighest edge weights between existing product bonds
@@ -205,10 +191,6 @@ class Optimization:
                 self.bonds['bonds'].remove(listB)
                 listA.extend(listB)
                 self.bonds['bonds'].append(listA)
-        
-        print('\n' + 'Restliste: ' + str(self.usl))
-        print('\n' + 'Paare: ' + str(self.bonds))
-        print('\n' + 'sorted lists: ' + str(len(self.bonds['bonds'])))
 
 
 

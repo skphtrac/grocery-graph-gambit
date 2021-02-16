@@ -255,7 +255,6 @@ class Store():
         return 'product not found'
 
 
-
 class Graph:
 
     def __init__(self):
